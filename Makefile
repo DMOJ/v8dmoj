@@ -8,7 +8,6 @@ LDFLAGS=-static -pthread v8lib/icudtl_dat.o -Wl,--start-group \
             v8lib/libv8_snapshot.a \
             v8lib/libicuuc.a \
             v8lib/libicui18n.a \
-            v8lib/libinspector.a \
         -Wl,--end-group -lrt -s -Wl,--gc-sections
 
 all: build v8dmoj
