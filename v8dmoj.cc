@@ -102,6 +102,7 @@ v8::Local<v8::Context> CreateShellContext(v8::Isolate* isolate) {
   InitializeInputModule(isolate, global);
   InitializeOutputModule(isolate, global);
   InitializeRuntimeModule(isolate, global);
+  InitializeBinIOModule(isolate, global);
 
   return v8::Context::New(isolate, NULL, global);
 }

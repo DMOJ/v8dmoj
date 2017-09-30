@@ -49,6 +49,6 @@ const char* ToCString(const v8::String::Utf8Value& value);
 void InitializeInputModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global);
 void InitializeOutputModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global);
 void InitializeRuntimeModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global);
-void Gets(const v8::FunctionCallbackInfo<v8::Value>& args);
+void InitializeBinIOModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global);
 
 #endif
