@@ -30,6 +30,8 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <chrono>
+#include <thread>
 
 
 // The callback that is invoked by v8 whenever the JavaScript 'quit'
@@ -52,6 +54,13 @@ void Version(const v8::FunctionCallbackInfo<v8::Value>& args) {
 }
 
 
+void Sleep(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  int ms = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+  std::chrono::milliseconds duration(ms);
+  std::this_thread::sleep_for(duration);
+}
+
+
 void InitializeRuntimeModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global) {
   // Bind the 'quit' function
   global->Set(v8::String::NewFromUtf8(
@@ -62,5 +71,10 @@ void InitializeRuntimeModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate>
   global->Set(v8::String::NewFromUtf8(
                   isolate, "version", v8::NewStringType::kNormal).ToLocalChecked(),
               v8::FunctionTemplate::New(isolate, Version));
+
+  // Bind the 'sleep' function
+  global->Set(v8::String::NewFromUtf8(
+                  isolate, "sleep", v8::NewStringType::kNormal).ToLocalChecked(),
+              v8::FunctionTemplate::New(isolate, Sleep));
 
 }
