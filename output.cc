@@ -59,6 +59,19 @@ static void Flush(const v8::FunctionCallbackInfo<v8::Value>& args) {
 }
 
 
+static void GetAutoflush(v8::Local<v8::String> property,
+                         const v8::PropertyCallbackInfo<v8::Value> &info) {
+  info.GetReturnValue().Set(v8::Boolean::New(info.GetIsolate(), autoflush));
+}
+
+
+static void SetAutoflush(v8::Local<v8::String> property,
+                         v8::Local<v8::Value> value,
+                         const v8::PropertyCallbackInfo<void> &info) {
+  autoflush = value->BooleanValue();
+}
+
+
 void InitializeOutputModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global) {
   // Bind the global 'print' function to the C++ Print callback.
   global->Set(v8::String::NewFromUtf8(
@@ -69,4 +82,9 @@ void InitializeOutputModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> 
   global->Set(v8::String::NewFromUtf8(
                   isolate, "flush", v8::NewStringType::kNormal).ToLocalChecked(),
               v8::FunctionTemplate::New(isolate, Flush));
+
+  // Bind the global 'autoflush' property to the autoflush variable.
+  global->SetAccessor(v8::String::NewFromUtf8(
+                          isolate, "autoflush", v8::NewStringType::kNormal).ToLocalChecked(),
+                      GetAutoflush, SetAutoflush);
 }
