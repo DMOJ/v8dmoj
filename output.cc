@@ -30,22 +30,40 @@
 
 #include <stdio.h>
 
+static bool autoflush = false;
+
 // The callback that is invoked by v8 whenever the JavaScript 'print'
 // function is called.  Prints its arguments on stdout separated by
 // spaces and ending with a newline.
-void Print(const v8::FunctionCallbackInfo<v8::Value>& args) {
+static void Print(const v8::FunctionCallbackInfo<v8::Value>& args) {
   bool first = true;
   for (int i = 0; i < args.Length(); i++) {
     v8::HandleScope handle_scope(args.GetIsolate());
     if (first) {
       first = false;
     } else {
-      printf(" ");
+      putchar(' ');
     }
     v8::String::Utf8Value str(args[i]);
-    const char* cstr = ToCString(str);
-    printf("%s", cstr);
+    fputs(ToCString(str), stdout);
   }
-  printf("\n");
+  putchar('\n');
+  if (autoflush)
+    fflush(stdout);
+}
+
+static void Flush(const v8::FunctionCallbackInfo<v8::Value>& args) {
   fflush(stdout);
+}
+
+void InitializeOutput(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global) {
+  // Bind the global 'print' function to the C++ Print callback.
+  global->Set(v8::String::NewFromUtf8(
+                  isolate, "print", v8::NewStringType::kNormal).ToLocalChecked(),
+              v8::FunctionTemplate::New(isolate, Print));
+
+  // Bind the global 'flush' function to the C++ Flush callback.
+  global->Set(v8::String::NewFromUtf8(
+                  isolate, "flush", v8::NewStringType::kNormal).ToLocalChecked(),
+              v8::FunctionTemplate::New(isolate, Flush));
 }
