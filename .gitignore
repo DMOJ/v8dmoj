@@ -26,3 +26,13 @@
 *.exe
 *.out
 *.app
+
+# v8 Binaries
+/v8inc
+/v8lib
+
+# Build directory
+/build
+
+# Build result
+/v8dmoj
