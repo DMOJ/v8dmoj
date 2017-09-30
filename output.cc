@@ -28,9 +28,10 @@
 
 #include "v8dmoj.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 static bool autoflush = false;
+
 
 // The callback that is invoked by v8 whenever the JavaScript 'print'
 // function is called.  Prints its arguments on stdout separated by
@@ -42,21 +43,23 @@ static void Print(const v8::FunctionCallbackInfo<v8::Value>& args) {
     if (first) {
       first = false;
     } else {
-      putchar(' ');
+      std::putchar(' ');
     }
     v8::String::Utf8Value str(args[i]);
-    fputs(ToCString(str), stdout);
+    std::fputs(ToCString(str), stdout);
   }
-  putchar('\n');
+  std::putchar('\n');
   if (autoflush)
-    fflush(stdout);
+    std::fflush(stdout);
 }
+
 
 static void Flush(const v8::FunctionCallbackInfo<v8::Value>& args) {
-  fflush(stdout);
+  std::fflush(stdout);
 }
 
-void InitializeOutput(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global) {
+
+void InitializeOutputModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global) {
   // Bind the global 'print' function to the C++ Print callback.
   global->Set(v8::String::NewFromUtf8(
                   isolate, "print", v8::NewStringType::kNormal).ToLocalChecked(),

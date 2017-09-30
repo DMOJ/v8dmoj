@@ -28,34 +28,31 @@
 
 #include "v8dmoj.h"
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
 
 // The callback that is invoked by v8 whenever the JavaScript 'gets'
 // function is called.  Returns one line from stdin.
 void Gets(const v8::FunctionCallbackInfo<v8::Value>& args) {
-  if (args.Length() != 0) {
-    args.GetIsolate()->ThrowException(
-        v8::String::NewFromUtf8(args.GetIsolate(), "Bad parameters"));
-    return;
-  }
-
   int bufSize = 1024, valid = 0, extra = 1024;
-  char *buffer = (char*) malloc(1024), *str = buffer;
+  char *buffer = (char*) std::malloc(1024), *str = buffer;
   if (!buffer) {
     args.GetIsolate()->ThrowException(
         v8::String::NewFromUtf8(args.GetIsolate(), "Out of memory"));
     return;
   }
+
   buffer[0] = 0;
   while (true) {
-    if (fgets(str, extra, stdin) == NULL)
+    if (std::fgets(str, extra, stdin) == NULL)
       break;
-    valid += strlen(str);
+    valid += std::strlen(str);
     if (buffer[valid-1] == '\n')
       break;
     extra = bufSize;
-    char *newBuf = (char*) realloc(buffer, bufSize *= 2);
+    char *newBuf = (char*) std::realloc(buffer, bufSize *= 2);
     if (!newBuf) {
       args.GetIsolate()->ThrowException(
         v8::String::NewFromUtf8(args.GetIsolate(), "Out of memory"));
@@ -69,5 +66,13 @@ void Gets(const v8::FunctionCallbackInfo<v8::Value>& args) {
   args.GetReturnValue().Set(
     v8::String::NewFromUtf8(args.GetIsolate(), buffer, v8::String::kNormalString, valid)
   );
-  free(buffer);
+  std::free(buffer);
+}
+
+
+void InitializeInputModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global) {
+  // Bind the global 'gets' function to the C++ Gets callback.
+  global->Set(v8::String::NewFromUtf8(
+                  isolate, "gets", v8::NewStringType::kNormal).ToLocalChecked(),
+              v8::FunctionTemplate::New(isolate, Gets));
 }

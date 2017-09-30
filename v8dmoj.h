@@ -46,10 +46,9 @@ void ReportException(v8::Isolate* isolate, v8::TryCatch* handler);
 const char* ToCString(const v8::String::Utf8Value& value);
 
 /* Modules. */
-void InitializeOutput(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global);
+void InitializeInputModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global);
+void InitializeOutputModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global);
+void InitializeRuntimeModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global);
 void Gets(const v8::FunctionCallbackInfo<v8::Value>& args);
-void Quit(const v8::FunctionCallbackInfo<v8::Value>& args);
-void Version(const v8::FunctionCallbackInfo<v8::Value>& args);
-
 
 #endif

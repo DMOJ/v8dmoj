@@ -98,21 +98,10 @@ v8::Local<v8::Context> CreateShellContext(v8::Isolate* isolate) {
   // Create a template for the global object.
   v8::Local<v8::ObjectTemplate> global = v8::ObjectTemplate::New(isolate);
 
-  // Initialize the output module.
-  InitializeOutput(isolate, global);
-
-  // Bind the global 'gets' function to the C++ Gets callback.
-  global->Set(v8::String::NewFromUtf8(
-                  isolate, "gets", v8::NewStringType::kNormal).ToLocalChecked(),
-              v8::FunctionTemplate::New(isolate, Gets));
-  // Bind the 'quit' function
-  global->Set(v8::String::NewFromUtf8(
-                  isolate, "quit", v8::NewStringType::kNormal).ToLocalChecked(),
-              v8::FunctionTemplate::New(isolate, Quit));
-  // Bind the 'version' function
-  global->Set(v8::String::NewFromUtf8(
-                  isolate, "version", v8::NewStringType::kNormal).ToLocalChecked(),
-              v8::FunctionTemplate::New(isolate, Version));
+  // Initialize modules.
+  InitializeInputModule(isolate, global);
+  InitializeOutputModule(isolate, global);
+  InitializeRuntimeModule(isolate, global);
 
   return v8::Context::New(isolate, NULL, global);
 }
