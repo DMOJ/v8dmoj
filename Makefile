@@ -1,14 +1,17 @@
-CXX=clang++ -stdlib=libc++
-CXXFLAGS=-Wall -O3 -march=native -std=gnu++11 -Iv8inc
-LDFLAGS=-static -pthread v8lib/icudtl_dat.o -Wl,--start-group \
-            v8lib/libv8_base.a \
-            v8lib/libv8_libbase.a \
-            v8lib/libv8_libplatform.a \
-            v8lib/libv8_libsampler.a \
-            v8lib/libv8_snapshot.a \
-            v8lib/libicuuc.a \
-            v8lib/libicui18n.a \
-        -Wl,--end-group -lrt -s -Wl,--gc-sections
+CXX=cl /nologo
+CXXFLAGS=/W3 /Ox /Iv8inc /EHsc
+LDFLAGS=v8lib/v8_base_0.lib \
+        v8lib/v8_base_1.lib \
+        v8lib/v8_libbase.lib \
+        v8lib/v8_libplatform.lib \
+        v8lib/v8_libsampler.lib \
+        v8lib/v8_snapshot.lib \
+        v8lib/icuuc.lib \
+        v8lib/icui18n.lib \
+        advapi32.lib \
+        shlwapi.lib \
+        winmm.lib \
+        dbghelp.lib
 
 all: build v8dmoj
 
@@ -16,8 +19,8 @@ build:
 	mkdir build
 
 clean:
-	rm -f v8dmoj
-	rm -rf build
+	del /q v8dmoj
+	del /s /q build
 
 input.cc: v8dmoj.h
 output.cc: v8dmoj.h
@@ -25,14 +28,14 @@ binio.cc: v8dmoj.h
 runtime.cc: v8dmoj.h
 v8dmoj.cc: v8dmoj.h
 
-build/input.o: input.cc
-build/output.o: output.cc
-build/binio.o: binio.cc
-build/runtime.o: runtime.cc
-build/v8dmoj.o: v8dmoj.cc
+build/input.obj: input.cc
+build/output.obj: output.cc
+build/binio.obj: binio.cc
+build/runtime.obj: runtime.cc
+build/v8dmoj.obj: v8dmoj.cc
 
-v8dmoj: build/binio.o build/input.o build/output.o build/runtime.o build/v8dmoj.o
-	$(CXX) $^ $(LDFLAGS) -o $@
+v8dmoj: build/binio.obj build/input.obj build/output.obj build/runtime.obj build/v8dmoj.obj
+	$(CXX) $(LDFLAGS) /Fe$@ $**
 
-build/%.o: %.cc
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+.cc{build}.obj::
+	$(CXX) $(CXXFLAGS) /Fobuild\ $<
