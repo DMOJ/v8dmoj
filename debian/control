@@ -1,0 +1,14 @@
+Source: v8dmoj
+Section: unknown
+Priority: optional
+Maintainer: unknown <quantum@dmoj.ca>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.8
+Homepage: https://github.com/DMOJ/v8dmoj
+Vcs-Git: https://github.com/DMOJ/v8dmoj.git
+Vcs-Browser: https://github.com/DMOJ/v8dmoj
+
+Package: v8dmoj
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: v8 in online judge format, statically linked.

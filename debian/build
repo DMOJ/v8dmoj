@@ -1,0 +1,2 @@
+#!/bin/sh
+exec dpkg-buildpackage -us -uc -b

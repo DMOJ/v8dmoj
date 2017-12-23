@@ -36,3 +36,10 @@
 
 # Build result
 /v8dmoj
+
+# Debian stuff
+debian/debhelper-build-stamp
+debian/files
+debian/v8dmoj/
+debian/v8dmoj.debhelper.log
+debian/v8dmoj.substvars
