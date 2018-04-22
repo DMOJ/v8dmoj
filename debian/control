@@ -1,7 +1,7 @@
 Source: v8dmoj
 Section: unknown
 Priority: optional
-Maintainer: unknown <quantum@dmoj.ca>
+Maintainer: Quantum <quantum@dmoj.ca>
 Build-Depends: debhelper (>= 9)
 Standards-Version: 3.9.8
 Homepage: https://github.com/DMOJ/v8dmoj

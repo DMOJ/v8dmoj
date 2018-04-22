@@ -38,8 +38,19 @@
 /v8dmoj
 
 # Debian stuff
-debian/debhelper-build-stamp
-debian/files
-debian/v8dmoj/
-debian/v8dmoj.debhelper.log
-debian/v8dmoj.substvars
+/debian/debhelper-build-stamp
+/debian/.debhelper/
+/debian/files
+/debian/v8dmoj/
+/debian/v8dmoj.debhelper.log
+/debian/v8dmoj.substvars
+/debian/changelog
+*.deb
+
+# Build script stuff
+/.gclient
+/.gclient_entries
+/depot_tools/
+/v8/
+/v8dmoj_6.6.346.24_amd64.deb
+/v8version
