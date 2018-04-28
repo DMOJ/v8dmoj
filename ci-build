@@ -3,7 +3,7 @@ cd "$( dirname "${BASH_SOURCE[0]}" )"
 dir="$(pwd)"
 version=$(curl -s 'https://omahaproxy.appspot.com/all.json?os=linux&channel=stable' | python -c 'import json,sys;print(json.load(sys.stdin)[0]["versions"][0]["v8_version"])')
 
-if [ ! -f v8version ] || [ "$(cat v8version)" != '6.6.346.24' ]; then
+if [ ! -f v8version ] || [ "$(cat v8version)" != "$version" ]; then
     [ -f depot_tools/gclient ] || (rm -rf depot_tools && git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git)
     export PATH="$PATH:$(pwd)/depot_tools"
     [ -d v8 ] || (gclient; fetch v8)
