@@ -44,7 +44,7 @@ You must have `git`, `clang`, and GNU `make` installed.
     ```
 11. `ninja -C out.gn/x64.release`
 12. `mkdir <path to v8dmoj>/v8lib`
-13. `find out.gn/x64.release/obj/ -name '*.a' -exec cp {} <path to v8dmoj>/v8lib \;`
+13. `find out.gn/x64.release/obj/ -name '*.a' | while read -r file; do ar t "$file" | xargs ar rs "<path to v8dmoj>/v8lib/$(basename "$file")"; done`
 14. `cp out.gn/x64.release/obj/third_party/icu/icudata/icudtl_dat.o ~/v8dmoj/v8lib/`
 15. `cp -R include <path to v8dmoj>/v8inc`
 16. `cd <path to v8dmoj>`

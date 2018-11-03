@@ -235,7 +235,7 @@ bool ExecuteString(v8::Isolate* isolate, v8::Local<v8::String> source,
       if (print_result && !result->IsUndefined()) {
         // If all went well and the result wasn't undefined then print
         // the returned value.
-        v8::String::Utf8Value str(result);
+        v8::String::Utf8Value str(isolate, result);
         const char* cstr = ToCString(str);
         printf("%s\n", cstr);
       }
@@ -247,7 +247,7 @@ bool ExecuteString(v8::Isolate* isolate, v8::Local<v8::String> source,
 
 void ReportException(v8::Isolate* isolate, v8::TryCatch* try_catch) {
   v8::HandleScope handle_scope(isolate);
-  v8::String::Utf8Value exception(try_catch->Exception());
+  v8::String::Utf8Value exception(isolate, try_catch->Exception());
   const char* exception_string = ToCString(exception);
   v8::Local<v8::Message> message = try_catch->Message();
   if (message.IsEmpty()) {
@@ -256,14 +256,13 @@ void ReportException(v8::Isolate* isolate, v8::TryCatch* try_catch) {
     fprintf(stderr, "%s\n", exception_string);
   } else {
     // Print (filename):(line number): (message).
-    v8::String::Utf8Value filename(message->GetScriptOrigin().ResourceName());
+    v8::String::Utf8Value filename(isolate, message->GetScriptOrigin().ResourceName());
     v8::Local<v8::Context> context(isolate->GetCurrentContext());
     const char* filename_string = ToCString(filename);
     int linenum = message->GetLineNumber(context).FromJust();
     fprintf(stderr, "%s:%i: %s\n", filename_string, linenum, exception_string);
     // Print line of source code.
-    v8::String::Utf8Value sourceline(
-        message->GetSourceLine(context).ToLocalChecked());
+    v8::String::Utf8Value sourceline(isolate, message->GetSourceLine(context).ToLocalChecked());
     const char* sourceline_string = ToCString(sourceline);
     fprintf(stderr, "%s\n", sourceline_string);
     // Print wavy underline (GetUnderline is deprecated).
@@ -280,7 +279,7 @@ void ReportException(v8::Isolate* isolate, v8::TryCatch* try_catch) {
     if (try_catch->StackTrace(context).ToLocal(&stack_trace_string) &&
         stack_trace_string->IsString() &&
         v8::Local<v8::String>::Cast(stack_trace_string)->Length() > 0) {
-      v8::String::Utf8Value stack_trace(stack_trace_string);
+      v8::String::Utf8Value stack_trace(isolate, stack_trace_string);
       const char* stack_trace_string = ToCString(stack_trace);
       fprintf(stderr, "%s\n", stack_trace_string);
     }

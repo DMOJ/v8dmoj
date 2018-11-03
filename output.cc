@@ -45,7 +45,7 @@ static void Print(const v8::FunctionCallbackInfo<v8::Value>& args) {
     } else {
       std::putchar(' ');
     }
-    v8::String::Utf8Value str(args[i]);
+    v8::String::Utf8Value str(args.GetIsolate(), args[i]);
     std::fputs(ToCString(str), stdout);
   }
   std::putchar('\n');
