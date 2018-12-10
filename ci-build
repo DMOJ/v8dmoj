@@ -28,6 +28,7 @@ EOF
 
     ninja -C out.gn/x64.release
     set +x
+    cd ..
     echo "$version" > v8version
 fi
 
