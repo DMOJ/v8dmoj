@@ -68,7 +68,7 @@ static void GetAutoflush(v8::Local<v8::String> property,
 static void SetAutoflush(v8::Local<v8::String> property,
                          v8::Local<v8::Value> value,
                          const v8::PropertyCallbackInfo<void> &info) {
-  autoflush = value->BooleanValue();
+  autoflush = value->BooleanValue(info.GetIsolate());
 }
 
 
