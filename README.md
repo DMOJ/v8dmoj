@@ -1,4 +1,4 @@
-# v8dmoj
+# v8dmoj [![Build Status](https://ci.dmoj.ca/job/v8dmoj-linux-amd64/badge/icon)](https://ci.dmoj.ca/job/v8dmoj-linux-amd64/)
 V8-based JavaScript interpreter for online judging
 
 ## Prebuilt Packages
