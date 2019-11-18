@@ -40,7 +40,8 @@ void Gets(const v8::FunctionCallbackInfo<v8::Value>& args) {
   char *buffer = (char*) std::malloc(1024), *str = buffer;
   if (!buffer) {
     args.GetIsolate()->ThrowException(
-        v8::String::NewFromUtf8(args.GetIsolate(), "Out of memory"));
+        v8::String::NewFromUtf8(args.GetIsolate(), "Out of memory")
+            .ToLocalChecked());
     return;
   }
 
@@ -55,7 +56,8 @@ void Gets(const v8::FunctionCallbackInfo<v8::Value>& args) {
     char *newBuf = (char*) std::realloc(buffer, bufSize *= 2);
     if (!newBuf) {
       args.GetIsolate()->ThrowException(
-        v8::String::NewFromUtf8(args.GetIsolate(), "Out of memory"));
+          v8::String::NewFromUtf8(args.GetIsolate(), "Out of memory")
+              .ToLocalChecked());
       return;
     }
     buffer = newBuf;
@@ -64,7 +66,8 @@ void Gets(const v8::FunctionCallbackInfo<v8::Value>& args) {
   while (buffer[valid-1] == '\n' || buffer[valid-1] == '\r')
     --valid;
   args.GetReturnValue().Set(
-    v8::String::NewFromUtf8(args.GetIsolate(), buffer, v8::String::kNormalString, valid)
+      v8::String::NewFromUtf8(args.GetIsolate(), buffer, v8::NewStringType::kNormal, valid)
+          .ToLocalChecked()
   );
   std::free(buffer);
 }

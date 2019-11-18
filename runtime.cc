@@ -50,7 +50,8 @@ static void Quit(const v8::FunctionCallbackInfo<v8::Value>& args) {
 
 void Version(const v8::FunctionCallbackInfo<v8::Value>& args) {
   args.GetReturnValue().Set(
-      v8::String::NewFromUtf8(args.GetIsolate(), v8::V8::GetVersion()));
+      v8::String::NewFromUtf8(args.GetIsolate(), v8::V8::GetVersion(),
+                              v8::NewStringType::kNormal).ToLocalChecked());
 }
 
 

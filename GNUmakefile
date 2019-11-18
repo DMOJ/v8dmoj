@@ -1,14 +1,22 @@
 CXX=clang++ -stdlib=libc++
-CXXFLAGS=-Wall -O3 -march=native -std=gnu++11 -Iv8inc
-LDFLAGS=-static -pthread v8lib/icudtl_dat.o -Wl,--start-group \
-            v8lib/libv8_base.a \
+CXXFLAGS=-Wall -O3 -std=gnu++11 -Iv8inc
+LDFLAGS=-static -pthread -nostdlib++ -Wl,-O2 -Wl,--gc-sections v8lib/icudtl_dat.o -Wl,--start-group \
+            v8lib/libc++.a \
+            v8lib/libc++abi.a \
             v8lib/libv8_libbase.a \
             v8lib/libv8_libplatform.a \
-            v8lib/libv8_libsampler.a \
-            v8lib/libv8_snapshot.a \
-            v8lib/libicuuc.a \
+            v8lib/libv8_base_without_compiler.a \
             v8lib/libicui18n.a \
-        -Wl,--end-group -lrt -s -Wl,--gc-sections
+            v8lib/libicuuc.a \
+            v8lib/libtorque_generated_definitions.a \
+            v8lib/libv8_libsampler.a \
+            v8lib/libinspector.a \
+            v8lib/libinspector_string_conversions.a \
+            v8lib/libencoding.a \
+            v8lib/libbindings.a \
+            v8lib/libv8_compiler.a \
+            v8lib/libv8_snapshot.a \
+        -Wl,--end-group -lrt -s
 
 all: build v8dmoj
 

@@ -36,7 +36,7 @@
 
 /**
  * This V8 shell is modified specifically for the needs of the
- * Don Mills Online Judge. It supports reading from stdin, but not
+ * DMOJ: Modern Online Judge. It supports reading from stdin, but not
  * from files. Based on the V8 Sample shell.
  */
 
@@ -47,22 +47,11 @@ const char* ToCString(const v8::String::Utf8Value& value) {
   return *value ? *value : "<string conversion failed>";
 }
 
-class ShellArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
- public:
-  virtual void* Allocate(size_t length) {
-    void* data = AllocateUninitialized(length);
-    return data == NULL ? data : memset(data, 0, length);
-  }
-  virtual void* AllocateUninitialized(size_t length) { return malloc(length); }
-  virtual void Free(void* data, size_t) { free(data); }
-};
-
 
 int main(int argc, char* argv[]) {
-  v8::V8::InitializeICUDefaultLocation(argv[0]);
-  v8::V8::InitializeExternalStartupData(argv[0]);
-  v8::Platform* platform = v8::platform::CreateDefaultPlatform();
-  v8::V8::InitializePlatform(platform);
+  v8::V8::InitializeICU();
+  std::unique_ptr<v8::Platform> platform = v8::platform::NewDefaultPlatform();
+  v8::V8::InitializePlatform(platform.get());
   v8::V8::Initialize();
   v8::V8::SetFlagsFromCommandLine(&argc, argv, true);
   v8::Isolate::CreateParams create_params;
@@ -80,13 +69,12 @@ int main(int argc, char* argv[]) {
       return 1;
     }
     v8::Context::Scope context_scope(context);
-    result = RunMain(isolate, platform, argc, argv);
-    if (run_shell) RunShell(context, platform);
+    result = RunMain(isolate, platform.get(), argc, argv);
+    if (run_shell) RunShell(context, platform.get());
   }
   isolate->Dispose();
   v8::V8::Dispose();
   v8::V8::ShutdownPlatform();
-  delete platform;
   delete create_params.array_buffer_allocator;
   return result;
 }
@@ -256,13 +244,15 @@ void ReportException(v8::Isolate* isolate, v8::TryCatch* try_catch) {
     fprintf(stderr, "%s\n", exception_string);
   } else {
     // Print (filename):(line number): (message).
-    v8::String::Utf8Value filename(isolate, message->GetScriptOrigin().ResourceName());
+    v8::String::Utf8Value filename(isolate,
+                                   message->GetScriptOrigin().ResourceName());
     v8::Local<v8::Context> context(isolate->GetCurrentContext());
     const char* filename_string = ToCString(filename);
     int linenum = message->GetLineNumber(context).FromJust();
     fprintf(stderr, "%s:%i: %s\n", filename_string, linenum, exception_string);
     // Print line of source code.
-    v8::String::Utf8Value sourceline(isolate, message->GetSourceLine(context).ToLocalChecked());
+    v8::String::Utf8Value sourceline(
+        isolate, message->GetSourceLine(context).ToLocalChecked());
     const char* sourceline_string = ToCString(sourceline);
     fprintf(stderr, "%s\n", sourceline_string);
     // Print wavy underline (GetUnderline is deprecated).

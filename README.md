@@ -46,9 +46,11 @@ You must have `git`, `clang`, and GNU `make` installed.
 12. `mkdir <path to v8dmoj>/v8lib`
 13. `find out.gn/x64.release/obj/ -name '*.a' | while read -r file; do ar t "$file" | xargs ar rs "<path to v8dmoj>/v8lib/$(basename "$file")"; done`
 14. `cp out.gn/x64.release/obj/third_party/icu/icudata/icudtl_dat.o <path to v8dmoj>/v8lib`
-15. `cp -R include <path to v8dmoj>/v8inc`
-16. `cd <path to v8dmoj>`
-17. `make`
+15. `ar cr <path to v8dmoj>/v8lib/libc++.a out.gn/x64.release/obj/buildtools/third_party/libc++/libc++/*`
+16. `ar cr <path to v8dmoj>/v8lib/libc++abi.a out.gn/x64.release/obj/buildtools/third_party/libc++abi/libc++abi/`
+17. `cp -R include <path to v8dmoj>/v8inc`
+18. `cd <path to v8dmoj>`
+19. `make`
 
 ## Building on Windows
  1. Download [depot tools](https://storage.googleapis.com/chrome-infra/depot_tools.zip) and unpack into a directory called `depot_tools`.
