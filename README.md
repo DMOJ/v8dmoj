@@ -45,7 +45,7 @@ You must have `git`, `clang`, and GNU `make` installed.
 11. `ninja -C out.gn/x64.release`
 12. `mkdir <path to v8dmoj>/v8lib`
 13. `find out.gn/x64.release/obj/ -name '*.a' | while read -r file; do ar t "$file" | xargs ar rs "<path to v8dmoj>/v8lib/$(basename "$file")"; done`
-14. `cp out.gn/x64.release/obj/third_party/icu/icudata/icudtl_dat.o ~/v8dmoj/v8lib/`
+14. `cp out.gn/x64.release/obj/third_party/icu/icudata/icudtl_dat.o <path to v8dmoj>/v8lib`
 15. `cp -R include <path to v8dmoj>/v8inc`
 16. `cd <path to v8dmoj>`
 17. `make`
@@ -78,6 +78,6 @@ You must have `git`, `clang`, and GNU `make` installed.
 11. `ninja -C out.gn/x64.release`
 12. `mkdir [path to v8dmoj]\v8lib`
 13. `for /R out.gn\x64.release\obj %f in (*.lib) do @copy /y %f [path to v8dmoj]\v8lib\ > nul`
-14. `xcopy /s /y include C:\Users\Quantum\code\DMOJ\v8dmoj\v8inc\`
+14. `xcopy /s /y include [path to v8dmoj]\v8inc\`
 15. `cd [path to v8dmoj]`
 16. `nmake`
