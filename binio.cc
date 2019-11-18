@@ -28,13 +28,14 @@
 
 #include "v8dmoj.h"
 
-#include <cstdio>
 #include <cstdint>
-
+#include <cstdio>
 
 // Read a specified number of bytes from stdin and return it as a Uint8Array.
-static void Read(const v8::FunctionCallbackInfo<v8::Value>& args) {
-  size_t bytes = (size_t) args[0]->IntegerValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+static void Read(const v8::FunctionCallbackInfo<v8::Value> &args) {
+  size_t bytes = (size_t)args[0]
+                     ->IntegerValue(args.GetIsolate()->GetCurrentContext())
+                     .FromMaybe(0);
   if (!bytes) {
     args.GetReturnValue().SetUndefined();
     return;
@@ -48,8 +49,7 @@ static void Read(const v8::FunctionCallbackInfo<v8::Value>& args) {
   free(buffer);
 }
 
-
-static void Write(const v8::FunctionCallbackInfo<v8::Value>& args) {
+static void Write(const v8::FunctionCallbackInfo<v8::Value> &args) {
   v8::Local<v8::ArrayBuffer> buffer;
   size_t offset, length;
   if (args[0]->IsArrayBufferView()) {
@@ -65,19 +65,21 @@ static void Write(const v8::FunctionCallbackInfo<v8::Value>& args) {
     return;
   }
 
-  std::fwrite((char *) buffer->GetContents().Data() + offset, 1, length, stdout);
+  std::fwrite((char *)buffer->GetContents().Data() + offset, 1, length, stdout);
   std::fflush(stdout);
 }
 
-
-void InitializeBinIOModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global) {
+void InitializeBinIOModule(v8::Isolate *isolate,
+                           v8::Local<v8::ObjectTemplate> &global) {
   // Bind the global 'read' function to the C++ Read callback.
-  global->Set(v8::String::NewFromUtf8(
-                  isolate, "read", v8::NewStringType::kNormal).ToLocalChecked(),
-              v8::FunctionTemplate::New(isolate, Read));
+  global->Set(
+      v8::String::NewFromUtf8(isolate, "read", v8::NewStringType::kNormal)
+          .ToLocalChecked(),
+      v8::FunctionTemplate::New(isolate, Read));
 
   // Bind the global 'Write' function to the C++ Write callback.
-  global->Set(v8::String::NewFromUtf8(
-                  isolate, "write", v8::NewStringType::kNormal).ToLocalChecked(),
-              v8::FunctionTemplate::New(isolate, Write));
+  global->Set(
+      v8::String::NewFromUtf8(isolate, "write", v8::NewStringType::kNormal)
+          .ToLocalChecked(),
+      v8::FunctionTemplate::New(isolate, Write));
 }

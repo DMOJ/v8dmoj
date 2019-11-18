@@ -32,11 +32,10 @@
 
 static bool autoflush = false;
 
-
 // The callback that is invoked by v8 whenever the JavaScript 'print'
 // function is called.  Prints its arguments on stdout separated by
 // spaces and ending with a newline.
-static void Print(const v8::FunctionCallbackInfo<v8::Value>& args) {
+static void Print(const v8::FunctionCallbackInfo<v8::Value> &args) {
   bool first = true;
   for (int i = 0; i < args.Length(); i++) {
     v8::HandleScope handle_scope(args.GetIsolate());
@@ -49,21 +48,17 @@ static void Print(const v8::FunctionCallbackInfo<v8::Value>& args) {
     std::fputs(ToCString(str), stdout);
   }
   std::putchar('\n');
-  if (autoflush)
-    std::fflush(stdout);
+  if (autoflush) std::fflush(stdout);
 }
 
-
-static void Flush(const v8::FunctionCallbackInfo<v8::Value>& args) {
+static void Flush(const v8::FunctionCallbackInfo<v8::Value> &args) {
   std::fflush(stdout);
 }
-
 
 static void GetAutoflush(v8::Local<v8::String> property,
                          const v8::PropertyCallbackInfo<v8::Value> &info) {
   info.GetReturnValue().Set(v8::Boolean::New(info.GetIsolate(), autoflush));
 }
-
 
 static void SetAutoflush(v8::Local<v8::String> property,
                          v8::Local<v8::Value> value,
@@ -71,20 +66,23 @@ static void SetAutoflush(v8::Local<v8::String> property,
   autoflush = value->BooleanValue(info.GetIsolate());
 }
 
-
-void InitializeOutputModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global) {
+void InitializeOutputModule(v8::Isolate *isolate,
+                            v8::Local<v8::ObjectTemplate> &global) {
   // Bind the global 'print' function to the C++ Print callback.
-  global->Set(v8::String::NewFromUtf8(
-                  isolate, "print", v8::NewStringType::kNormal).ToLocalChecked(),
-              v8::FunctionTemplate::New(isolate, Print));
+  global->Set(
+      v8::String::NewFromUtf8(isolate, "print", v8::NewStringType::kNormal)
+          .ToLocalChecked(),
+      v8::FunctionTemplate::New(isolate, Print));
 
   // Bind the global 'flush' function to the C++ Flush callback.
-  global->Set(v8::String::NewFromUtf8(
-                  isolate, "flush", v8::NewStringType::kNormal).ToLocalChecked(),
-              v8::FunctionTemplate::New(isolate, Flush));
+  global->Set(
+      v8::String::NewFromUtf8(isolate, "flush", v8::NewStringType::kNormal)
+          .ToLocalChecked(),
+      v8::FunctionTemplate::New(isolate, Flush));
 
   // Bind the global 'autoflush' property to the autoflush variable.
-  global->SetAccessor(v8::String::NewFromUtf8(
-                          isolate, "autoflush", v8::NewStringType::kNormal).ToLocalChecked(),
-                      GetAutoflush, SetAutoflush);
+  global->SetAccessor(
+      v8::String::NewFromUtf8(isolate, "autoflush", v8::NewStringType::kNormal)
+          .ToLocalChecked(),
+      GetAutoflush, SetAutoflush);
 }

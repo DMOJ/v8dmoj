@@ -28,15 +28,14 @@
 
 #include "v8dmoj.h"
 
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
-#include <chrono>
 #include <thread>
-
 
 // The callback that is invoked by v8 whenever the JavaScript 'quit'
 // function is called.  Quits.
-static void Quit(const v8::FunctionCallbackInfo<v8::Value>& args) {
+static void Quit(const v8::FunctionCallbackInfo<v8::Value> &args) {
   // If not arguments are given args[0] will yield undefined which
   // converts to the integer value 0.
   int exit_code =
@@ -47,35 +46,37 @@ static void Quit(const v8::FunctionCallbackInfo<v8::Value>& args) {
   std::exit(exit_code);
 }
 
-
-void Version(const v8::FunctionCallbackInfo<v8::Value>& args) {
-  args.GetReturnValue().Set(
-      v8::String::NewFromUtf8(args.GetIsolate(), v8::V8::GetVersion(),
-                              v8::NewStringType::kNormal).ToLocalChecked());
+void Version(const v8::FunctionCallbackInfo<v8::Value> &args) {
+  args.GetReturnValue().Set(v8::String::NewFromUtf8(args.GetIsolate(),
+                                                    v8::V8::GetVersion(),
+                                                    v8::NewStringType::kNormal)
+                                .ToLocalChecked());
 }
 
-
-void Sleep(const v8::FunctionCallbackInfo<v8::Value>& args) {
-  int ms = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+void Sleep(const v8::FunctionCallbackInfo<v8::Value> &args) {
+  int ms =
+      args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
   std::chrono::milliseconds duration(ms);
   std::this_thread::sleep_for(duration);
 }
 
-
-void InitializeRuntimeModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global) {
+void InitializeRuntimeModule(v8::Isolate *isolate,
+                             v8::Local<v8::ObjectTemplate> &global) {
   // Bind the 'quit' function
-  global->Set(v8::String::NewFromUtf8(
-                  isolate, "quit", v8::NewStringType::kNormal).ToLocalChecked(),
-              v8::FunctionTemplate::New(isolate, Quit));
+  global->Set(
+      v8::String::NewFromUtf8(isolate, "quit", v8::NewStringType::kNormal)
+          .ToLocalChecked(),
+      v8::FunctionTemplate::New(isolate, Quit));
 
   // Bind the 'version' function
-  global->Set(v8::String::NewFromUtf8(
-                  isolate, "version", v8::NewStringType::kNormal).ToLocalChecked(),
-              v8::FunctionTemplate::New(isolate, Version));
+  global->Set(
+      v8::String::NewFromUtf8(isolate, "version", v8::NewStringType::kNormal)
+          .ToLocalChecked(),
+      v8::FunctionTemplate::New(isolate, Version));
 
   // Bind the 'sleep' function
-  global->Set(v8::String::NewFromUtf8(
-                  isolate, "sleep", v8::NewStringType::kNormal).ToLocalChecked(),
-              v8::FunctionTemplate::New(isolate, Sleep));
-
+  global->Set(
+      v8::String::NewFromUtf8(isolate, "sleep", v8::NewStringType::kNormal)
+          .ToLocalChecked(),
+      v8::FunctionTemplate::New(isolate, Sleep));
 }

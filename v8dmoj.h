@@ -30,25 +30,29 @@
 #ifndef _V8DMOJ_H
 #define _V8DMOJ_H
 
-#include <v8.h>
 #include <libplatform/libplatform.h>
+#include <v8.h>
 
 /* Shell functionality. */
-v8::Local<v8::Context> CreateShellContext(v8::Isolate* isolate);
-void RunShell(v8::Local<v8::Context> context, v8::Platform* platform);
-int RunMain(v8::Isolate* isolate, v8::Platform* platform, int argc,
-            char* argv[]);
-bool ExecuteString(v8::Isolate* isolate, v8::Local<v8::String> source,
+v8::Local<v8::Context> CreateShellContext(v8::Isolate *isolate);
+void RunShell(v8::Local<v8::Context> context, v8::Platform *platform);
+int RunMain(v8::Isolate *isolate, v8::Platform *platform, int argc,
+            char *argv[]);
+bool ExecuteString(v8::Isolate *isolate, v8::Local<v8::String> source,
                    v8::Local<v8::Value> name, bool print_result,
                    bool report_exceptions);
-v8::MaybeLocal<v8::String> ReadFile(v8::Isolate* isolate, const char* name);
-void ReportException(v8::Isolate* isolate, v8::TryCatch* handler);
-const char* ToCString(const v8::String::Utf8Value& value);
+v8::MaybeLocal<v8::String> ReadFile(v8::Isolate *isolate, const char *name);
+void ReportException(v8::Isolate *isolate, v8::TryCatch *handler);
+const char *ToCString(const v8::String::Utf8Value &value);
 
 /* Modules. */
-void InitializeInputModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global);
-void InitializeOutputModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global);
-void InitializeRuntimeModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global);
-void InitializeBinIOModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global);
+void InitializeInputModule(v8::Isolate *isolate,
+                           v8::Local<v8::ObjectTemplate> &global);
+void InitializeOutputModule(v8::Isolate *isolate,
+                            v8::Local<v8::ObjectTemplate> &global);
+void InitializeRuntimeModule(v8::Isolate *isolate,
+                             v8::Local<v8::ObjectTemplate> &global);
+void InitializeBinIOModule(v8::Isolate *isolate,
+                           v8::Local<v8::ObjectTemplate> &global);
 
 #endif

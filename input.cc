@@ -32,12 +32,11 @@
 #include <cstdlib>
 #include <cstring>
 
-
 // The callback that is invoked by v8 whenever the JavaScript 'gets'
 // function is called.  Returns one line from stdin.
-void Gets(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void Gets(const v8::FunctionCallbackInfo<v8::Value> &args) {
   int bufSize = 1024, valid = 0, extra = 1024;
-  char *buffer = (char*) std::malloc(1024), *str = buffer;
+  char *buffer = (char *)std::malloc(1024), *str = buffer;
   if (!buffer) {
     args.GetIsolate()->ThrowException(
         v8::String::NewFromUtf8(args.GetIsolate(), "Out of memory")
@@ -47,13 +46,11 @@ void Gets(const v8::FunctionCallbackInfo<v8::Value>& args) {
 
   buffer[0] = 0;
   while (true) {
-    if (std::fgets(str, extra, stdin) == NULL)
-      break;
+    if (std::fgets(str, extra, stdin) == NULL) break;
     valid += std::strlen(str);
-    if (buffer[valid-1] == '\n')
-      break;
+    if (buffer[valid - 1] == '\n') break;
     extra = bufSize;
-    char *newBuf = (char*) std::realloc(buffer, bufSize *= 2);
+    char *newBuf = (char *)std::realloc(buffer, bufSize *= 2);
     if (!newBuf) {
       args.GetIsolate()->ThrowException(
           v8::String::NewFromUtf8(args.GetIsolate(), "Out of memory")
@@ -63,19 +60,19 @@ void Gets(const v8::FunctionCallbackInfo<v8::Value>& args) {
     buffer = newBuf;
     str = buffer + valid;
   }
-  while (buffer[valid-1] == '\n' || buffer[valid-1] == '\r')
-    --valid;
-  args.GetReturnValue().Set(
-      v8::String::NewFromUtf8(args.GetIsolate(), buffer, v8::NewStringType::kNormal, valid)
-          .ToLocalChecked()
-  );
+  while (buffer[valid - 1] == '\n' || buffer[valid - 1] == '\r') --valid;
+  args.GetReturnValue().Set(v8::String::NewFromUtf8(args.GetIsolate(), buffer,
+                                                    v8::NewStringType::kNormal,
+                                                    valid)
+                                .ToLocalChecked());
   std::free(buffer);
 }
 
-
-void InitializeInputModule(v8::Isolate* isolate, v8::Local<v8::ObjectTemplate> &global) {
+void InitializeInputModule(v8::Isolate *isolate,
+                           v8::Local<v8::ObjectTemplate> &global) {
   // Bind the global 'gets' function to the C++ Gets callback.
-  global->Set(v8::String::NewFromUtf8(
-                  isolate, "gets", v8::NewStringType::kNormal).ToLocalChecked(),
-              v8::FunctionTemplate::New(isolate, Gets));
+  global->Set(
+      v8::String::NewFromUtf8(isolate, "gets", v8::NewStringType::kNormal)
+          .ToLocalChecked(),
+      v8::FunctionTemplate::New(isolate, Gets));
 }
