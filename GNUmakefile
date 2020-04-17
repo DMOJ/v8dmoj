@@ -16,6 +16,8 @@ LDFLAGS=-static -pthread -nostdlib++ -Wl,-O2 -Wl,--gc-sections v8lib/icudtl_dat.
             v8lib/libbindings.a \
             v8lib/libv8_compiler.a \
             v8lib/libv8_snapshot.a \
+            v8lib/libchrome_zlib.a \
+            v8lib/adler32_simd.o \
         -Wl,--end-group -lrt -s
 
 all: build v8dmoj
