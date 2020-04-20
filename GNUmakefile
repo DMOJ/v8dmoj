@@ -12,8 +12,6 @@ LDFLAGS=-static -pthread -nostdlib++ -Wl,-O2 -Wl,--gc-sections v8lib/icudtl_dat.
             v8lib/libv8_libsampler.a \
             v8lib/libinspector.a \
             v8lib/libinspector_string_conversions.a \
-            v8lib/libencoding.a \
-            v8lib/libbindings.a \
             v8lib/libv8_compiler.a \
             v8lib/libv8_snapshot.a \
             v8lib/libchrome_zlib.a \
