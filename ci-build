@@ -23,6 +23,7 @@ use_sysroot = false
 treat_warnings_as_errors = false
 icu_use_data_file = false
 v8_use_external_startup_data = false
+v8_enable_pointer_compression = false
 EOF
     gn gen out.gn/x64.release
 
