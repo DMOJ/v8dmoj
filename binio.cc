@@ -44,7 +44,7 @@ static void Read(const v8::FunctionCallbackInfo<v8::Value> &args) {
   void *buffer = std::malloc(bytes);
   size_t read = std::fread(buffer, 1, bytes, stdin);
   auto result = v8::ArrayBuffer::New(args.GetIsolate(), read);
-  memcpy(result->GetContents().Data(), buffer, read);
+  memcpy(result->GetBackingStore()->Data(), buffer, read);
   args.GetReturnValue().Set(result);
   free(buffer);
 }
@@ -65,7 +65,7 @@ static void Write(const v8::FunctionCallbackInfo<v8::Value> &args) {
     return;
   }
 
-  std::fwrite((char *)buffer->GetContents().Data() + offset, 1, length, stdout);
+  std::fwrite((char *)buffer->GetBackingStore()->Data() + offset, 1, length, stdout);
   std::fflush(stdout);
 }
 
