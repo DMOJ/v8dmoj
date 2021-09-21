@@ -28,8 +28,7 @@
 *.app
 
 # v8 Binaries
-/v8inc
-/v8lib
+/monolith
 
 # Build directory
 /build

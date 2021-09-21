@@ -1,0 +1,50 @@
+#!/bin/bash -e
+VERSION="${VERSION:-$(curl -s 'https://omahaproxy.appspot.com/all.json?os=linux&channel=stable' | python -c 'import json,sys;print(json.load(sys.stdin)[0]["versions"][0]["v8_version"])')}"
+TARGET_CPU="${TARGET_CPU:-x64}"
+
+[ -f depot_tools/gclient ] || (rm -rf depot_tools && git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git)
+export PATH="$PATH:$(pwd)/depot_tools"
+[ -d v8 ] || (gclient; fetch v8)
+
+cd v8
+if [ "$(git describe --tags)" != "$VERSION" ]; then
+    git fetch
+    echo "Building v8 version: $VERSION"
+    git checkout "$VERSION"
+    gclient sync
+fi
+
+tools/dev/v8gen.py "$TARGET_CPU".release
+cat > out.gn/"$TARGET_CPU".release/args.gn <<EOF
+is_debug = false
+target_cpu = "$TARGET_CPU"
+v8_target_cpu = "$TARGET_CPU"
+v8_monolithic = true
+v8_static_library = true
+treat_warnings_as_errors = false
+icu_use_data_file = false
+v8_use_external_startup_data = false
+v8_enable_pointer_compression = false
+
+is_clang = false
+use_custom_libcxx = false
+use_custom_libcxx_for_host = false
+use_sysroot = false
+use_glib = false
+EOF
+gn gen out.gn/"$TARGET_CPU".release
+
+ninja -C out.gn/"$TARGET_CPU".release v8_monolith
+
+name="v8-monolith-$VERSION-$TARGET_CPU"
+rm -rf "$name"
+mkdir "$name"
+
+cp -r include "$name"
+cp out.gn/"$TARGET_CPU".release/obj/libv8_monolith.a "$name"
+echo "$VERSION" > "$name/v8version"
+echo "$TARGET_CPU" > "$name/v8arch"
+
+tar cJf "$name.tar.xz" "$name"
+rm -rf "$name"
+echo Monolith built: "$name.tar.xz"

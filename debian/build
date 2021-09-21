@@ -12,4 +12,5 @@ v8dmoj ($1) stable; urgency=medium
  -- Quantum <quantum@dmoj.ca>  $(LC_ALL=C date '+%a, %d %b %Y %H:%M:%S %z')
 EOF
 
-exec dpkg-buildpackage -us -uc -b
+shift
+exec dpkg-buildpackage -us -uc -b "$@"

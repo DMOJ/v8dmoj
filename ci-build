@@ -1,52 +1,5 @@
 #!/bin/bash
-cd "$( dirname "${BASH_SOURCE[0]}" )"
-dir="$(pwd)"
-version=$(curl -s 'https://omahaproxy.appspot.com/all.json?os=linux&channel=stable' | python -c 'import json,sys;print(json.load(sys.stdin)[0]["versions"][0]["v8_version"])')
-
-if [ ! -f v8version ] || [ "$(cat v8version)" != "$version" ]; then
-    [ -f depot_tools/gclient ] || (rm -rf depot_tools && git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git)
-    export PATH="$PATH:$(pwd)/depot_tools"
-    [ -d v8 ] || (gclient; fetch v8)
-
-    cd v8
-    set -x
-    git fetch
-    echo "Building v8 version: $version"
-    git checkout "$version"
-    gclient sync
-
-    tools/dev/v8gen.py x64.release
-    cat >> out.gn/x64.release/args.gn <<'EOF'
-is_component_build = false
-v8_static_library = true
-use_sysroot = false
-treat_warnings_as_errors = false
-icu_use_data_file = false
-v8_use_external_startup_data = false
-v8_enable_pointer_compression = false
-EOF
-    gn gen out.gn/x64.release
-
-    ninja -C out.gn/x64.release
-    set +x
-    cd ..
-    echo "$version" > v8version
-fi
-
-cd v8
-rm -rf "$dir/v8lib" "$dir/v8inc"
-mkdir "$dir/v8lib"
-find out.gn/x64.release/obj/ -name '*.a' | while read -r file; do
-    ar t "$file" | xargs ar rs "$dir/v8lib/$(basename "$file")"
-done
-cp out.gn/x64.release/obj/third_party/icu/icudata/icudtl_dat.o "$dir/v8lib"
-cp out.gn/x64.release/obj/third_party/zlib/zlib_adler32_simd/adler32_simd.o "$dir/v8lib"
-ar cr "$dir/v8lib/libc++.a" out.gn/x64.release/obj/buildtools/third_party/libc++/libc++/*
-ar cr "$dir/v8lib/libc++abi.a" out.gn/x64.release/obj/buildtools/third_party/libc++abi/libc++abi/*
-cp -R include "$dir/v8inc"
-cd "$dir"
-
-rm -f *.deb
-debian/build "$(cat v8version)"
-mv "../v8dmoj_$(cat v8version)_$(dpkg --print-architecture).deb" .
-rm "../v8dmoj_$(cat v8version)"*
+DEBIAN_ARCH="${DEBIAN_ARCH:-$(dpkg --print-architecture)}"
+debian/build "$(cat monolith/v8version)" -a"$DEBIAN_ARCH"
+mv "../v8dmoj_$(cat monolith/v8version)_$DEBIAN_ARCH.deb" .
+rm "../v8dmoj_$(cat monolith/v8version)"*
